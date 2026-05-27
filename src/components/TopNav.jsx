@@ -10,7 +10,6 @@ const TABS = [
   { id: 'students', label: 'Students' },
 ];
 
-/** Sticky top navigation. Review/Results are gated until a sheet is in progress. */
 export default function TopNav() {
   const { activeTab, goTab, session } = useApp();
   return (

@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 
-/** Drag-and-drop + click-to-browse image upload zone. */
 export default function Dropzone({ onFile, disabled }) {
   const inputRef = useRef(null);
   const [active, setActive] = useState(false);

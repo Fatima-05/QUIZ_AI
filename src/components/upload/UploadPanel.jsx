@@ -28,7 +28,6 @@ export default function UploadPanel() {
 
   const quiz = useMemo(() => quizzes.find((q) => q.id === quizId), [quizzes, quizId]);
 
-  /** Build a Review session from a scan result. */
   function sessionFromScan(scan, imageUrl, source) {
     const { key, omr, student, report } = scan;
     return {

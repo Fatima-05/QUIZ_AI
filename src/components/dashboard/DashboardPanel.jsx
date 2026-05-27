@@ -8,7 +8,7 @@ const fmtDate = (iso) => { try { return new Date(iso).toLocaleDateString(undefin
 
 export default function DashboardPanel() {
   const { results, quizzes, deleteResult, goTab, pushToast } = useApp();
-  const [filter, setFilter] = useState('all'); // by set
+  const [filter, setFilter] = useState('all'); 
 
   const sets = useMemo(() => [...new Set(results.map((r) => r.set).filter(Boolean))], [results]);
   const rows = useMemo(() => (filter === 'all' ? results : results.filter((r) => r.set === filter)), [results, filter]);
@@ -35,7 +35,6 @@ export default function DashboardPanel() {
     return buckets.map((b) => ({ label: b.label, value: rows.filter((r) => b.test(r.percentage)).length, max: rows.length || 1, tone: b.tone }));
   }, [rows]);
 
-  // per-question difficulty needs the answer key — match by set
   const difficulty = useMemo(() => {
     if (filter === 'all' || !rows.length) return null;
     const quiz = quizzes.find((q) => q.set === filter);

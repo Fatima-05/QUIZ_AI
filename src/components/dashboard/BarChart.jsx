@@ -1,7 +1,3 @@
-/**
- * Lightweight horizontal bar chart (no chart library).
- * rows: [{ label, value, max, display?, tone? }]  tone: 'ok' | 'bad' | undefined
- */
 export default function BarChart({ rows }) {
   if (!rows.length) return <p className="muted">No data.</p>;
   const max = Math.max(1, ...rows.map((r) => r.max ?? r.value));

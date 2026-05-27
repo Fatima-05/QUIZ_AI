@@ -1,4 +1,3 @@
-/** Three-step progress indicator for the grading wizard. */
 const STEPS = ['Upload', 'Review', 'Results'];
 
 export default function Stepper({ current }) {

@@ -2,7 +2,6 @@ import { useApp } from '../../store/AppContext.jsx';
 
 const ICONS = { success: '✓', error: '✕', info: 'ℹ' };
 
-/** Stack of auto-dismissing toast notifications (bottom-right). */
 export default function Toasts() {
   const { toasts, dismissToast } = useApp();
   if (!toasts.length) return null;

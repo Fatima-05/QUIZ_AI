@@ -5,7 +5,7 @@ const blank = { name: '', regNo: '', class: 'BSE-4A' };
 
 export default function StudentManager() {
   const { students, results, addStudent, updateStudent, deleteStudent, pushToast } = useApp();
-  const [draft, setDraft] = useState(null); // null | {id?,name,regNo,class}
+  const [draft, setDraft] = useState(null); 
 
   function save() {
     if (!draft.name.trim() || !draft.regNo.trim()) { pushToast({ type: 'error', title: 'Name and Reg # required' }); return; }

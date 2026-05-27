@@ -15,8 +15,8 @@ const STATUS = {
 export default function BatchPanel() {
   const { saveResult, upsertStudentByReg, pushToast, goTab } = useApp();
   const inputRef = useRef(null);
-  const [rows, setRows] = useState([]);      // { record?, file, status, name, regNo, set, pct }
-  const [progress, setProgress] = useState(null); // { done, total }
+  const [rows, setRows] = useState([]);      
+  const [progress, setProgress] = useState(null); 
   const [active, setActive] = useState(false);
 
   async function processFiles(fileList) {
