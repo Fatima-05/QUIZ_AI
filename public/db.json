@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "appName": "GradeScan",
+    "version": 2,
+    "description": "Seed database. Copied into localStorage on first run; afterwards localStorage is the live store. Quizzes hold the answer key (also encoded in each sheet's QR); students are keyed by registration number and auto-created from OCR when unseen."
+  },
+  "quizzes": [
+    {
+      "id": "AIQ-SETC",
+      "title": "AI Quiz",
+      "set": "Set-C",
+      "class": "BSE-4A",
+      "subject": "Artificial Intelligence",
+      "timeAllowed": "30 min",
+      "marksPerQuestion": 1,
+      "negativeMarking": 0,
+      "parts": {
+        "part1": ["D", "A", "B", "A", "D", "A", "A", "B"],
+        "part2": ["C", "D", "D", "D", "C", "C", "C", "B"]
+      }
+    },
+    {
+      "id": "AIQ-SETA",
+      "title": "AI Quiz",
+      "set": "Set-A",
+      "class": "BSE-4A",
+      "subject": "Artificial Intelligence",
+      "timeAllowed": "30 min",
+      "marksPerQuestion": 1,
+      "negativeMarking": 0.25,
+      "parts": {
+        "part1": ["A", "C", "C", "B", "D", "A", "B", "D"],
+        "part2": ["B", "A", "D", "C", "A", "D", "C", "B"]
+      }
+    }
+  ],
+  "students": [
+    { "id": "S001", "name": "Ayesha Khan", "regNo": "2022-BSE-014", "class": "BSE-4A" },
+    { "id": "S002", "name": "Bilal Ahmed", "regNo": "2022-BSE-027", "class": "BSE-4A" },
+    { "id": "S003", "name": "Hira Saleem", "regNo": "2022-BSE-031", "class": "BSE-4A" }
+  ],
+  "results": [
+    {
+      "id": "R-seed-1",
+      "quizId": "AIQ-SETC",
+      "set": "Set-C",
+      "class": "BSE-4A",
+      "subject": "Artificial Intelligence",
+      "studentName": "Ayesha Khan",
+      "regNo": "2022-BSE-014",
+      "part1": ["D", "A", "B", "A", "D", "A", "A", "B"],
+      "part2": ["C", "D", "D", "D", "C", "C", "B", "B"],
+      "correct": 15, "incorrect": 1, "unattempted": 0,
+      "totalMarks": 15, "maxMarks": 16, "percentage": 94, "grade": "A",
+      "flags": [],
+      "source": "seed",
+      "gradedAt": "2026-05-22T09:15:00.000Z"
+    },
+    {
+      "id": "R-seed-2",
+      "quizId": "AIQ-SETC",
+      "set": "Set-C",
+      "class": "BSE-4A",
+      "subject": "Artificial Intelligence",
+      "studentName": "Bilal Ahmed",
+      "regNo": "2022-BSE-027",
+      "part1": ["D", "A", "C", "A", "D", "B", "A", "B"],
+      "part2": ["C", "D", "A", "D", "C", "C", "C", null],
+      "correct": 12, "incorrect": 3, "unattempted": 1,
+      "totalMarks": 12, "maxMarks": 16, "percentage": 75, "grade": "B",
+      "flags": [],
+      "source": "seed",
+      "gradedAt": "2026-05-22T09:16:00.000Z"
+    }
+  ]
+}
