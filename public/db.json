@@ -35,9 +35,9 @@
     }
   ],
   "students": [
-    { "id": "S001", "name": "Ayesha Khan", "regNo": "2022-BSE-014", "class": "BSE-4A" },
-    { "id": "S002", "name": "Bilal Ahmed", "regNo": "2022-BSE-027", "class": "BSE-4A" },
-    { "id": "S003", "name": "Hira Saleem", "regNo": "2022-BSE-031", "class": "BSE-4A" }
+    { "id": "S001", "name": "Ayesha Khan", "regNo": "FA24-BSE-100", "class": "BSE-4A" },
+    { "id": "S002", "name": "Bilal Ahmed", "regNo": "FA24-BSE-101", "class": "BSE-4A" },
+    { "id": "S003", "name": "Ansa Irshad", "regNo": "FA24-BSE-102", "class": "BSE-4A" }
   ],
   "results": [
     {
@@ -47,7 +47,7 @@
       "class": "BSE-4A",
       "subject": "Artificial Intelligence",
       "studentName": "Ayesha Khan",
-      "regNo": "2022-BSE-014",
+      "regNo": "FA24-BSE-100",
       "part1": ["D", "A", "B", "A", "D", "A", "A", "B"],
       "part2": ["C", "D", "D", "D", "C", "C", "B", "B"],
       "correct": 15, "incorrect": 1, "unattempted": 0,
@@ -63,7 +63,7 @@
       "class": "BSE-4A",
       "subject": "Artificial Intelligence",
       "studentName": "Bilal Ahmed",
-      "regNo": "2022-BSE-027",
+      "regNo": "FA24-BSE-101",
       "part1": ["D", "A", "C", "A", "D", "B", "A", "B"],
       "part2": ["C", "D", "A", "D", "C", "C", "C", null],
       "correct": 12, "incorrect": 3, "unattempted": 1,
