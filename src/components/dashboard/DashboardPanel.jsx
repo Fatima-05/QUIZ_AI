@@ -26,11 +26,11 @@ export default function DashboardPanel() {
 
   const distribution = useMemo(() => {
     const buckets = [
-      { label: '0–49 (F)', tone: 'bad', test: (p) => p < 50 },
-      { label: '50–64 (D)', test: (p) => p >= 50 && p < 65 },
-      { label: '65–74 (C)', test: (p) => p >= 65 && p < 75 },
-      { label: '75–84 (B)', test: (p) => p >= 75 && p < 85 },
-      { label: '85–100 (A)', tone: 'ok', test: (p) => p >= 85 },
+      { label: '0–49 (F)',  score: 25, test: (p) => p < 50 },
+      { label: '50–64 (D)', score: 55, test: (p) => p >= 50 && p < 65 },
+      { label: '65–74 (C)', score: 66, test: (p) => p >= 65 && p < 75 },
+      { label: '75–84 (B)', score: 78, test: (p) => p >= 75 && p < 85 },
+      { label: '85–100 (A)',score: 99, test: (p) => p >= 85 },
     ];
     return buckets.map((b) => ({ label: b.label, value: rows.filter((r) => b.test(r.percentage)).length, max: rows.length || 1, tone: b.tone }));
   }, [rows]);
