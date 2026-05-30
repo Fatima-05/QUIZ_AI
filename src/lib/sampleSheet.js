@@ -2,6 +2,61 @@ import QRCode from 'qrcode';
 import { SHEET, bubbleCenter, sheetHeight, canonicalCorners } from './sheetLayout.js';
 import { buildQuizQr } from './quizQr.js';
 
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function stringSeed(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i += 1) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return h >>> 0;
+}
+
+const HAND_FONT = "'Segoe Print', 'Bradley Hand', 'Comic Sans MS', 'Marker Felt', system-ui, cursive";
+
+function drawHandwritten(ctx, text, x, y, { size = 20, seed = 1, color = '#1a1a2e' } = {}) {
+  const rng = mulberry32(seed);
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  const baseSlant = (rng() - 0.5) * 0.06;
+  let cx = x;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (ch === ' ') { cx += size * 0.36; continue; }
+    const charSize = size * (0.91 + rng() * 0.18);
+    const dy = (rng() - 0.5) * size * 0.18;
+    const angle = baseSlant + (rng() - 0.5) * 0.08;
+    ctx.font = `${charSize}px ${HAND_FONT}`;
+    ctx.save();
+    ctx.translate(cx, y + dy);
+    ctx.rotate(angle);
+    ctx.fillText(ch, 0, 0);
+    ctx.restore();
+    cx += ctx.measureText(ch).width * 0.95; 
+  }
+  ctx.restore();
+}
+
+
+const FAKE_STUDENTS = [
+  { name: 'Ali Raza',         regNo: '2022-BSE-001' },
+  { name: 'Sara Iqbal',       regNo: '2022-BSE-007' },
+  { name: 'Hassan Tariq',     regNo: '2022-BSE-013' },
+  { name: 'Mehwish Anwar',    regNo: '2022-BSE-019' },
+  { name: 'Usman Sheikh',     regNo: '2022-BSE-024' },
+  { name: 'Zainab Malik',     regNo: '2022-BSE-029' },
+  { name: 'Faisal Aslam',     regNo: '2022-BSE-035' },
+  { name: 'Ifra Hussain',     regNo: '2022-BSE-040' },
+];
+
 function loadDataUrl(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -22,9 +77,8 @@ function drawBubble(ctx, cx, cy, filled, faint) {
 }
 
 /**
- * @param quiz   
- * @param opts   
- *
+ * @param quiz   quiz record
+ * @param opts   { answers?, studentName?, regNo?, blank? }
  */
 async function compose(quiz, { answers = null, studentName = '', regNo = '', blank = false } = {}) {
   const W = SHEET.width;
@@ -56,10 +110,9 @@ async function compose(quiz, { answers = null, studentName = '', regNo = '', bla
   ctx.fillText('Reg #:', SHEET.marginX, SHEET.regBox.y + 21);
   ctx.strokeRect(SHEET.regBox.x, SHEET.regBox.y, SHEET.regBox.w, SHEET.regBox.h);
   if (!blank) {
-    ctx.font = '16px Segoe UI, sans-serif';
-    ctx.fillStyle = '#111827';
-    if (studentName) ctx.fillText(studentName, SHEET.nameBox.x + 8, SHEET.nameBox.y + 21);
-    if (regNo) ctx.fillText(regNo, SHEET.regBox.x + 8, SHEET.regBox.y + 21);
+    const seed = stringSeed(`${studentName}|${regNo}`) || 1;
+    if (studentName) drawHandwritten(ctx, studentName, SHEET.nameBox.x + 10, SHEET.nameBox.y + 24, { size: 21, seed });
+    if (regNo) drawHandwritten(ctx, regNo, SHEET.regBox.x + 10, SHEET.regBox.y + 24, { size: 20, seed: seed + 0x9e3779b9 });
   }
 
   const qrSize = 200;
@@ -76,12 +129,10 @@ async function compose(quiz, { answers = null, studentName = '', regNo = '', bla
   ctx.textBaseline = 'middle';
   for (const part of ['part1', 'part2']) {
     const p = SHEET.parts[part];
-    
     ctx.textAlign = 'left';
     ctx.font = 'bold 15px Segoe UI, sans-serif';
     ctx.fillStyle = '#0b1220';
     ctx.fillText(p.title, p.titleX, SHEET.gridTop - 34);
-    
     ctx.textAlign = 'center';
     ctx.font = '12px Segoe UI, sans-serif';
     ctx.fillStyle = '#6b7280';
@@ -92,7 +143,6 @@ async function compose(quiz, { answers = null, studentName = '', regNo = '', bla
 
     for (let qi = 0; qi < SHEET.qCount; qi += 1) {
       const { cy } = bubbleCenter(part, qi, 0);
-
       ctx.textAlign = 'right';
       ctx.font = 'bold 13px Segoe UI, sans-serif';
       ctx.fillStyle = '#111827';
@@ -111,12 +161,22 @@ async function compose(quiz, { answers = null, studentName = '', regNo = '', bla
   return { dataUrl: canvas.toDataURL('image/png'), answers };
 }
 
-export function plausibleAnswers(quiz) {
+export function plausibleAnswers(quiz, seed = 1) {
+  const rng = mulberry32(seed);
   const out = { part1: [...quiz.parts.part1], part2: [...quiz.parts.part2] };
-  out.part1[2] = null;                      
-  out.part2[4] = 'X';                                    
-  const k = quiz.parts.part1[6];
-  out.part1[6] = SHEET.options[(SHEET.options.indexOf(k) + 1) % 4]; 
+  const wrong = 1 + Math.floor(rng() * 3);
+  for (let k = 0; k < wrong; k += 1) {
+    const part = rng() < 0.5 ? 'part1' : 'part2';
+    const qi = Math.floor(rng() * SHEET.qCount);
+    const key = quiz.parts[part][qi];
+    out[part][qi] = SHEET.options[(SHEET.options.indexOf(key) + 1 + Math.floor(rng() * 3)) % 4];
+  }
+  const blankPart = rng() < 0.5 ? 'part1' : 'part2';
+  out[blankPart][Math.floor(rng() * SHEET.qCount)] = null;
+  if (rng() < 0.3) {
+    const mp = rng() < 0.5 ? 'part1' : 'part2';
+    out[mp][Math.floor(rng() * SHEET.qCount)] = 'X';
+  }
   return out;
 }
 
@@ -125,7 +185,30 @@ export async function generateBlankSheet(quiz) {
 }
 
 export async function generateFilledSheet(quiz, { studentName = '', regNo = '', answers } = {}) {
-  return compose(quiz, { studentName, regNo, answers: answers ?? plausibleAnswers(quiz) });
+  const seed = stringSeed(`${studentName}|${regNo}`) || 1;
+  return compose(quiz, { studentName, regNo, answers: answers ?? plausibleAnswers(quiz, seed) });
+}
+
+
+export async function generateBatchTestSheets(quiz, { count = 5, students = [] } = {}) {
+  const pool = [...students.map((s) => ({ name: s.name, regNo: s.regNo })), ...FAKE_STUDENTS];
+  const seen = new Set();
+  const picked = [];
+  for (const s of pool) {
+    const k = (s.regNo || '').toLowerCase();
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    picked.push(s);
+    if (picked.length >= count) break;
+  }
+  while (picked.length < count) picked.push(FAKE_STUDENTS[picked.length % FAKE_STUDENTS.length]);
+
+  const sheets = [];
+  for (const s of picked) {
+    const { dataUrl, answers } = await generateFilledSheet(quiz, { studentName: s.name, regNo: s.regNo });
+    sheets.push({ dataUrl, studentName: s.name, regNo: s.regNo, answers });
+  }
+  return sheets;
 }
 
 export async function generateQrTag(quiz) {

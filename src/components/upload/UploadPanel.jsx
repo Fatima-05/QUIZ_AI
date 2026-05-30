@@ -4,13 +4,14 @@ import Stepper from '../common/Stepper.jsx';
 import Dropzone from './Dropzone.jsx';
 import { loadImage } from '../../lib/qr.js';
 import { scanSheet } from '../../lib/scan.js';
-import { generateBlankSheet, generateFilledSheet, generateQrTag } from '../../lib/sampleSheet.js';
+import { generateBlankSheet, generateFilledSheet, generateBatchTestSheets, generateQrTag } from '../../lib/sampleSheet.js';
 
 function downloadDataUrl(dataUrl, filename) {
   const a = document.createElement('a');
   a.href = dataUrl; a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
 }
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const STEP_LABEL = {
   qr: 'Decoding answer-key QR…',
@@ -20,7 +21,7 @@ const STEP_LABEL = {
 };
 
 export default function UploadPanel() {
-  const { quizzes, setSession, goTab, pushToast, setBusy } = useApp();
+  const { quizzes, students, setSession, goTab, pushToast, setBusy } = useApp();
   const [quizId, setQuizId] = useState(quizzes[0]?.id ?? '');
   const [preview, setPreview] = useState(null);
   const [showGen, setShowGen] = useState(false);
@@ -28,6 +29,7 @@ export default function UploadPanel() {
 
   const quiz = useMemo(() => quizzes.find((q) => q.id === quizId), [quizzes, quizId]);
 
+  /** Build a Review session from a scan result. */
   function sessionFromScan(scan, imageUrl, source) {
     const { key, omr, student, report } = scan;
     return {
@@ -96,10 +98,38 @@ export default function UploadPanel() {
   }
   async function genFilled() {
     if (!quiz) return;
-    setBusy('Generating test sheet…');
-    try { const out = await generateFilledSheet(quiz, { studentName: 'Test Student', regNo: '2022-BSE-100' }); setSample({ ...out, kind: 'filled' }); }
+    setBusy('Generating test sheet (handwritten name)…');
+    try {
+      // pick a random student from the roster, fallback to a synthetic one
+      const pick = students[Math.floor(Math.random() * students.length)]
+        ?? { name: 'Test Student', regNo: '2022-BSE-100' };
+      const out = await generateFilledSheet(quiz, { studentName: pick.name, regNo: pick.regNo });
+      setSample({ ...out, kind: 'filled', studentName: pick.name, regNo: pick.regNo });
+    }
     finally { setBusy(null); }
   }
+
+  /** Download N varied test sheets — each with a different handwritten student. */
+  async function genBatch() {
+    if (!quiz) return;
+    const count = 5;
+    setBusy(`Generating ${count} test sheets…`);
+    try {
+      const sheets = await generateBatchTestSheets(quiz, { count, students });
+      for (let i = 0; i < sheets.length; i += 1) {
+        const s = sheets[i];
+        const safeReg = (s.regNo || `student-${i + 1}`).replace(/[^A-Za-z0-9-]/g, '');
+        downloadDataUrl(s.dataUrl, `sheet-${quiz.id}-${safeReg}.png`);
+        await wait(250); // gap so the browser allows successive downloads
+      }
+      pushToast({
+        type: 'success',
+        title: `${sheets.length} test sheets downloaded`,
+        msg: 'Drop them into the Batch tab to grade them all.',
+      });
+    } finally { setBusy(null); }
+  }
+
   async function genQrTag() {
     if (!quiz) return;
     const { dataUrl } = await generateQrTag(quiz);
@@ -156,10 +186,14 @@ export default function UploadPanel() {
       {showGen && (
         <div className="card">
           <h3 className="card__title">Generate sheets &amp; QR tag</h3>
-          <p className="card__sub"><b>Blank</b> = print &amp; hand-fill (no student name). <b>Test</b> = pre-filled with a printed name for OCR testing. Both carry the answer-key QR + corner marks.</p>
+          <p className="card__sub">
+            <b>Blank</b> = print &amp; hand-fill (no student name). <b>Test</b> = one sheet, name/reg drawn in a <i>handwritten style</i> for OCR testing.
+            <b> Batch (×5)</b> = five sheets with different students &amp; different "hands" — download them all, then drop the folder into the <b>Batch</b> tab. Every sheet has the answer-key QR + corner marks.
+          </p>
           <div className="row mt-2">
             <button className="btn btn--primary" onClick={genBlank}>Generate blank</button>
             <button className="btn" onClick={genFilled}>Generate test sheet</button>
+            <button className="btn" onClick={genBatch}>⬇ Batch (×5)</button>
             <button className="btn btn--ghost" onClick={genQrTag}>🏷️ QR tag</button>
           </div>
           {sample && (
