@@ -1,0 +1,7 @@
+Quiz,Set,Class,Subject,Name,Reg No,Part1_Q01,Part1_Q02,Part1_Q03,Part1_Q04,Part1_Q05,Part1_Q06,Part1_Q07,Part1_Q08,Part2_Q01,Part2_Q02,Part2_Q03,Part2_Q04,Part2_Q05,Part2_Q06,Part2_Q07,Part2_Q08,Correct,Incorrect,Unattempted,Total Marks,Percentage,Grade
+AI Quiz,Set-C,BSE-4A,Artificial Intelligence,,,D,B,B,A,D,A,A,B,C,D,D,D,C,C,C,B,15,1,0,15,94%,A
+AI Quiz,Set-C,BSE-4A,Artificial Intelligence,,,D,A,C,A,D,A,A,B,C,D,D,D,C,D,C,B,14,2,0,14,88%,A
+AI Quiz,Set-C,BSE-4A,Artificial Intelligence,,,D,B,B,B,-,A,A,B,C,D,D,D,C,C,D,B,12,3,1,12,75%,B
+AI Quiz,Set-C,BSE-4A,Artificial Intelligence,,,D,A,B,A,D,A,A,B,C,D,D,D,C,C,C,B,16,0,0,16,100%,A
+AI Quiz,Set-C,BSE-4A,Artificial Intelligence,,,D,A,B,A,D,B,A,B,C,D,D,D,C,C,C,MULTI,14,2,0,14,88%,A
+SUMMARY,,,,,,,,,,,,,,,,,,,,,,,,,high 100% / low 75%,avg 89%,

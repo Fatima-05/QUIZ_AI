@@ -94,7 +94,7 @@ export default function ReviewPanel() {
           </div>
           <div className="field" style={{ marginBottom: 0 }}>
             <label>Registration #</label>
-            <input className="input" value={session.regNo} onChange={(e) => patch({ regNo: e.target.value })} placeholder="2022-BSE-000" />
+            <input className="input" value={session.regNo} onChange={(e) => patch({ regNo: e.target.value })} placeholder="FA24-BSE-000" />
           </div>
         </div>
         <p className="card__sub mt-1">New registration numbers are saved to the student roster automatically when you grade.</p>

@@ -28,7 +28,7 @@ export default function StudentManager() {
           <h3 className="card__title">{draft.id ? 'Edit student' : 'New student'}</h3>
           <div className="grid grid--3 mt-2">
             <div className="field"><label>Name</label><input className="input" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Full name" /></div>
-            <div className="field"><label>Registration #</label><input className="input" value={draft.regNo} onChange={(e) => setDraft({ ...draft, regNo: e.target.value })} placeholder="2022-BSE-000" /></div>
+            <div className="field"><label>Registration #</label><input className="input" value={draft.regNo} onChange={(e) => setDraft({ ...draft, regNo: e.target.value })} placeholder="FA24-BSE-000" /></div>
             <div className="field"><label>Class</label><input className="input" value={draft.class} onChange={(e) => setDraft({ ...draft, class: e.target.value })} /></div>
           </div>
           <div className="row mt-2">
