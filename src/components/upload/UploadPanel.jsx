@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../store/AppContext.jsx';
 import Stepper from '../common/Stepper.jsx';
-import Dropzone from './Dropzone.jsx';
+import Dropzone from './DropZone.jsx';
 import { loadImage } from '../../lib/qr.js';
 import { scanSheet } from '../../lib/scan.js';
 import { generateBlankSheet, generateFilledSheet, generateBatchTestSheets, generateQrTag } from '../../lib/sampleSheet.js';
